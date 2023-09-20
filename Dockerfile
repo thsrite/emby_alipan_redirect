@@ -15,7 +15,7 @@ RUN apt-get update \
    && cp -f /alipan_redirect/entrypoint /entrypoint \
    && chmod +x /entrypoint \
    && groupadd -r redirect -g 911 \
-   && useradd -r redirect -g strm -d /alipan_redirect -s /bin/bash -u 911 \
+   && useradd -r redirect -g redirect -d /alipan_redirect -s /bin/bash -u 911 \
    && pip install -r requirements.txt
 
 ENTRYPOINT [ "/entrypoint" ]
