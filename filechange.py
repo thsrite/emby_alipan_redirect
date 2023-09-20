@@ -104,14 +104,14 @@ class FileChange:
         # 构造.strm文件路径
         strm_path = os.path.join(dest_path, f"{os.path.splitext(video_name)[0]}.strm")
 
-        # 本地挂载路径转为emby路径
-        dest_dir = dest_dir.replace(self.destination_directory, self.emby_directory)
-
         # 写入.strm文件
         with open(strm_path, 'w') as f:
             f.write(dest_dir)
 
         logger.info(f"创建strm文件 {strm_path}")
+
+        # 本地挂载路径转为emby路径
+        dest_dir = dest_dir.replace(self.destination_directory, self.emby_directory)
 
         # 获取阿里云盘file_id，存储
         self.alipan.save_new_file_id(dest_dir=dest_dir)

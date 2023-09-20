@@ -30,6 +30,7 @@ class AliyunPan(metaclass=Singleton):
         self.clouddrive_source_directory = str(configs["sync"]["clouddrive_source_directory"])
         self.clouddrive_url = str(configs["sync"]["clouddrive_url"])
         self.straight_chain = bool(configs["sync"]["straight_chain"])
+        self.destination_directory = str(configs["sync"]["destination_directory"])
 
         self.RMT_MEDIA = ['.mp4', '.avi', '.rmvb', '.wmv', '.mov', '.mkv', '.flv', '.ts', '.webm', '.iso', '.mpg']
         # 第一次使用，会弹出二维码，供扫描登录
@@ -132,6 +133,8 @@ class AliyunPan(metaclass=Singleton):
         """
         # 替换路径中的\为/
         dest_dir = dest_dir.replace("\\", "/")
+        # 本地挂载路径转为emby路径
+        dest_dir = dest_dir.replace(self.destination_directory, self.emby_directory)
         file_id = self.__folder_files.get(dest_dir)
         if not self.straight_chain or not file_id:
             # 未查询到阿里云盘file_id 返回cd2连接
