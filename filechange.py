@@ -66,6 +66,11 @@ class FileChange:
             # 文件：nfo、图片、视频文件
             dest_file = event_path.replace(self.clouddrive_source_directory, self.destination_directory)
 
+            # 目标文件夹不存在则创建
+            if not Path(dest_file).parent.exists():
+                logger.info(f"创建目标文件夹 {Path(dest_file).parent}")
+                os.makedirs(Path(dest_file).parent)
+
             # 视频文件创建.strm文件
             video_formats = ('.mp4', '.avi', '.rmvb', '.wmv', '.mov', '.mkv', '.flv', '.ts', '.webm', '.iso', '.mpg')
             if event_path.lower().endswith(video_formats):
