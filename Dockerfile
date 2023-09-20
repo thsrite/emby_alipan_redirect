@@ -12,10 +12,10 @@ RUN apt-get update \
         gosu \
         bash \
         dumb-init \
-   && cp -f /alipan_strm/entrypoint /entrypoint \
+   && cp -f /alipan_redirect/entrypoint /entrypoint \
    && chmod +x /entrypoint \
-   && groupadd -r strm -g 911 \
-   && useradd -r strm -g strm -d /alipan_strm -s /bin/bash -u 911 \
+   && groupadd -r redirect -g 911 \
+   && useradd -r redirect -g strm -d /alipan_redirect -s /bin/bash -u 911 \
    && pip install -r requirements.txt
 
 ENTRYPOINT [ "/entrypoint" ]
