@@ -9,13 +9,7 @@ from aligo import Aligo
 
 from singleton import Singleton
 
-logging.basicConfig(filename="alipan_redirect", format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S ',
-                    level=logging.INFO)
 logger = logging.getLogger()
-KZT = logging.StreamHandler()
-KZT.setLevel(logging.DEBUG)
-logger.addHandler(KZT)
 
 
 class AliyunPan(metaclass=Singleton):
