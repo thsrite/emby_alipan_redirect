@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# 更改 redirect userid 和 groupid
+groupmod -o -g ${PGID} redirect
+usermod -o -u ${PUID} redirect
+# 更改文件权限
+chown -R redirect:redirect ${HOME}
+# 设置后端服务权限掩码
+umask ${UMASK}
+# 启动后端服务
+exec dumb-init gosu redirect:redirect python3 main.py
