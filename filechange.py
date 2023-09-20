@@ -23,6 +23,7 @@ class FileMonitorHandler(FileSystemEventHandler):
     """
     目录监控响应类
     """
+
     def __init__(self, monpath: str, sync: Any, **kwargs):
         super(FileMonitorHandler, self).__init__(**kwargs)
         self._watch_path = monpath
@@ -44,8 +45,8 @@ class FileChange:
             configs = yaml.load(f, Loader=yaml.FullLoader)  # 按字典格式读取并返回
 
         self.clouddrive_directory = str(configs["sync"]["clouddrive_directory"])
-        self.clouddrive_source_directory = str(
-            Path(self.clouddrive_directory).joinpath(str(configs["sync"]["clouddrive_source_directory"])))
+        self.clouddrive_source_directory = self.clouddrive_directory + str(
+            configs["sync"]["clouddrive_source_directory"])
         self.destination_directory = str(configs["sync"]["destination_directory"])
         self.emby_directory = str(configs["sync"]["emby_directory"])
 
