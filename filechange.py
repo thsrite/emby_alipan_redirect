@@ -61,62 +61,68 @@ class FileChange:
         observer.start()
 
     def event_handler(self, event, event_path: str):
-        # 文件夹同步创建
-        if event.is_directory:
-            target_path = event_path.replace(self.clouddrive_source_directory, self.destination_directory)
-            # 目标文件夹不存在则创建
-            if not Path(target_path).exists():
-                logger.info(f"创建目标文件夹 {target_path}")
-                os.makedirs(target_path)
-        else:
-            # 文件：nfo、图片、视频文件
-            dest_file = event_path.replace(self.clouddrive_source_directory, self.destination_directory)
-
-            # 目标文件夹不存在则创建
-            if not Path(dest_file).parent.exists():
-                logger.info(f"创建目标文件夹 {Path(dest_file).parent}")
-                os.makedirs(Path(dest_file).parent)
-
-            # 视频文件创建.strm文件
-            video_formats = ('.mp4', '.avi', '.rmvb', '.wmv', '.mov', '.mkv', '.flv', '.ts', '.webm', '.iso', '.mpg')
-            if event_path.lower().endswith(video_formats):
-                # 如果视频文件小于1MB，则直接复制，不创建.strm文件
-                if os.path.getsize(event_path) < 1024 * 1024:
-                    shutil.copy2(event_path, dest_file)
-                    logger.info(f"复制视频文件 {event_path} 到 {dest_file}")
-                    # 本地挂载路径转为emby路径
-                    dest_dir = dest_file.replace(self.destination_directory, self.emby_directory)
-                    # 获取阿里云盘file_id，存储
-                    self.alipan.save_new_file_id(dest_dir=dest_dir)
-                else:
-                    # 创建.strm文件
-                    self.create_strm_file(dest_file)
+        try:
+            # 文件夹同步创建
+            if event.is_directory:
+                target_path = event_path.replace(self.clouddrive_source_directory, self.destination_directory)
+                # 目标文件夹不存在则创建
+                if not Path(target_path).exists():
+                    logger.info(f"创建目标文件夹 {target_path}")
+                    os.makedirs(target_path)
             else:
-                # 其他nfo、jpg等复制文件
-                shutil.copy2(event_path, dest_file)
-                logger.info(f"复制其他文件 {event_path} 到 {dest_file}")
+                # 文件：nfo、图片、视频文件
+                dest_file = event_path.replace(self.clouddrive_source_directory, self.destination_directory)
+
+                # 目标文件夹不存在则创建
+                if not Path(dest_file).parent.exists():
+                    logger.info(f"创建目标文件夹 {Path(dest_file).parent}")
+                    os.makedirs(Path(dest_file).parent)
+
+                # 视频文件创建.strm文件
+                video_formats = ('.mp4', '.avi', '.rmvb', '.wmv', '.mov', '.mkv', '.flv', '.ts', '.webm', '.iso', '.mpg')
+                if event_path.lower().endswith(video_formats):
+                    # 如果视频文件小于1MB，则直接复制，不创建.strm文件
+                    if os.path.getsize(event_path) < 1024 * 1024:
+                        shutil.copy2(event_path, dest_file)
+                        logger.info(f"复制视频文件 {event_path} 到 {dest_file}")
+                        # 本地挂载路径转为emby路径
+                        dest_dir = dest_file.replace(self.destination_directory, self.emby_directory)
+                        # 获取阿里云盘file_id，存储
+                        self.alipan.save_new_file_id(dest_dir=dest_dir)
+                    else:
+                        # 创建.strm文件
+                        self.create_strm_file(dest_file)
+                else:
+                    # 其他nfo、jpg等复制文件
+                    shutil.copy2(event_path, dest_file)
+                    logger.info(f"复制其他文件 {event_path} 到 {dest_file}")
+        except Exception as e:
+            print(str(e))
 
     def create_strm_file(self, dest_dir):
-        # 获取视频文件名和目录
-        video_name = Path(dest_dir).name
+        try:
+            # 获取视频文件名和目录
+            video_name = Path(dest_dir).name
 
-        dest_path = Path(dest_dir).parent
+            dest_path = Path(dest_dir).parent
 
-        if not dest_path.exists():
-            logger.info(f"创建目标文件夹 {dest_path}")
-            os.makedirs(str(dest_path))
+            if not dest_path.exists():
+                logger.info(f"创建目标文件夹 {dest_path}")
+                os.makedirs(str(dest_path))
 
-        # 构造.strm文件路径
-        strm_path = os.path.join(dest_path, f"{os.path.splitext(video_name)[0]}.strm")
+            # 构造.strm文件路径
+            strm_path = os.path.join(dest_path, f"{os.path.splitext(video_name)[0]}.strm")
 
-        # 本地挂载路径转为emby路径
-        dest_dir = dest_dir.replace(self.destination_directory, self.emby_directory)
+            # 本地挂载路径转为emby路径
+            dest_dir = dest_dir.replace(self.destination_directory, self.emby_directory)
 
-        # 写入.strm文件
-        with open(strm_path, 'w') as f:
-            f.write(dest_dir)
+            # 写入.strm文件
+            with open(strm_path, 'w') as f:
+                f.write(dest_dir)
 
-        logger.info(f"创建strm文件 {strm_path}")
+            logger.info(f"创建strm文件 {strm_path}")
 
-        # 获取阿里云盘file_id，存储
-        self.alipan.save_new_file_id(dest_dir=dest_dir)
+            # 获取阿里云盘file_id，存储
+            self.alipan.save_new_file_id(dest_dir=dest_dir)
+        except Exception as e:
+            print(str(e))
