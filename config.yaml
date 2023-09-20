@@ -1,0 +1,8 @@
+sync:
+  alipan_directory_name: "emby"
+  clouddrive_directory: "/mnt/user/downloads/CloudDrive"
+  clouddrive_source_directory: "/aliyun/emby"
+  destination_directory: "/mnt/user/downloads/link/aliyun"
+  emby_directory: "/data/aliyun"
+  clouddrive_url: "192.168.31.103:19798"
+  straight_chain: true
